@@ -1429,6 +1429,7 @@ int main(){
     //10 books
     if (lib.all_books().empty()){
         for (int i = 0; i < 10; i++)
+        
         {
             Book b;
             b.set_id(id_of_book);
@@ -1447,6 +1448,7 @@ int main(){
     //5 students
     if (lib.get_student_count() == 0) {
         for (int i = 0; i < 5; i++) {
+
             Student* s = new Student();
             s->set_name_direct("Student" + to_string(i + 1));
             s->set_username_direct("student" + to_string(i + 1));
@@ -1458,7 +1460,9 @@ int main(){
 
     // 3 faculty
     if (lib.get_faculty_count() == 0) {
+
         for (int i = 0; i < 3; i++) {
+            
             Faculty* f = new Faculty();
             f->set_name_direct("Faculty" + to_string(i + 1));
             f->set_username_direct("faculty" + to_string(i + 1));
@@ -1468,15 +1472,21 @@ int main(){
         }
     }
 
+
     //1 librarian
     if (lib.get_librarian_count() == 0) {
+
         Librarian* l = new Librarian();
+
         l->set_name_direct("Librarian");
         l->set_username_direct("librarian");
         l->set_password_direct("pass"); 
         lib.add_new_librarian(l);
+
         cout << "Librarian auto-added with ID " << l->get_user_id() << endl;
     }
+
+
 
     int main_choice;
     do {
@@ -1489,7 +1499,6 @@ int main(){
             case 1:
                 lib.welcome();
                 break;
-
 
             case 2:
                 cout << "Exiting system and saving data..." << endl;
