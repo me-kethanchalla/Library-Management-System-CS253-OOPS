@@ -1,0 +1,11 @@
+id|title|author|publisher|year|isbn|status
+10001|Book1|Author1|Publisher1|2000|ISBN1|0
+10002|Book2|Author2|Publisher2|2001|ISBN2|0
+10003|Book3|Author3|Publisher3|2002|ISBN3|0
+10004|Book4|Author4|Publisher4|2003|ISBN4|0
+10005|Book5|Author5|Publisher5|2004|ISBN5|0
+10006|Book6|Author6|Publisher6|2005|ISBN6|0
+10007|Book7|Author7|Publisher7|2006|ISBN7|0
+10008|Book8|Author8|Publisher8|2007|ISBN8|0
+10009|Book9|Author9|Publisher9|2008|ISBN9|0
+10010|Book10|Author10|Publisher10|2009|ISBN10|0

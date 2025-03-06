@@ -1,0 +1,2 @@
+id_of_book|id_of_user
+10011|20010

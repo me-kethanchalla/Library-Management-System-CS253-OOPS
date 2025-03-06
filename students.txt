@@ -1,0 +1,6 @@
+id|name|username|password|max_books|num_books_borrowed|max_period
+20001|Student1|student1|pass|3|0|15
+20002|Student2|student2|pass|3|0|15
+20003|Student3|student3|pass|3|0|15
+20004|Student4|student4|pass|3|0|15
+20005|Student5|student5|pass|3|0|15
