@@ -8,7 +8,6 @@ A C++-based library management system that uses object-oriented programming prin
 - **Manage Users:** Role-specific features for Students, Faculty, and Librarians.
 - **Track Activity:** View borrowing history and fines.
 - **Data Persistence:** Auto-save and load data so that your work is never lost.
-- **Robust Input Validation:** Prevents infinite loops from invalid (non-numeric) input.
 
 ## Running the Program
 
