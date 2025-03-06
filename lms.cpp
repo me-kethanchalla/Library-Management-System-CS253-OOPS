@@ -3,14 +3,15 @@
 #include <ctime>
 #include <string>
 #include <fstream>
+#include <iomanip>
 #include <sstream>
 #include <limits> 
-using namespace std;
+using namespace std; 
+
 
 // Global IDs 
 int id_of_book = 10001;
 int id_of_user = 20001;
-
 
 int get_valid_int() {
     int num;
@@ -159,7 +160,7 @@ public:
 
     void set_name(){
         cout << "Enter name: ";
-        cin >> name;
+        getline(cin >> ws, name); 
     }
     string get_name() const{
         return name;
@@ -571,22 +572,25 @@ public:
     }
 
 
-    void add_new_book(vector<Book> &books){
+    void add_new_book(vector<Book>& books) {
         Book book;
         string title, author, publisher, isbn;
         int year;
 
-        
         cout << "Enter title: ";
-        cin >> title;
+        getline(cin >> ws, title); 
+
         cout << "Enter author: ";
-        cin >> author;
+        getline(cin >> ws, author);
+
         cout << "Enter publisher: ";
-        cin >> publisher;
+        getline(cin >> ws, publisher);
+
         cout << "Enter publication year: ";
         year = get_valid_int();
+
         cout << "Enter isbn: ";
-        cin >> isbn;
+        getline(cin >> ws, isbn);
 
         book.set_title(title);
         book.set_author(author);
@@ -784,7 +788,7 @@ public:
 
     string select_login_type(){
         cout << "\nWelcome to People's Library" << endl;
-        cout << "Select login type:" << endl;
+        cout << "Press number for Login Type" << endl;
         cout << "1. Student" << endl;
         cout << "2. Librarian" << endl;
         cout << "3. Faculty" << endl;
@@ -808,6 +812,41 @@ public:
         }
     }
 
+    void view_all_books() {
+        if (books_list.empty()) {
+            cout << "No books available in the library." << endl;
+            return;
+        }
+        
+
+        cout << left << setw(10) << "Book ID" 
+             << setw(30) << "Title" 
+             << setw(20) << "Author" 
+             << setw(25) << "Publication" 
+             << setw(10) << "Year" 
+             << setw(15) << "Status" << endl;
+        
+
+
+        cout << string(110, '-') << endl;
+        
+
+        for (const auto &book : books_list) {
+            cout << left << setw(10) << book.get_id()
+                 << setw(30) << book.get_title()
+                 << setw(20) << book.get_author()
+                 << setw(25) << book.get_publisher()
+                 << setw(10) << book.get_year();
+            
+
+            if (book.get_status() == status::available)
+                cout << setw(15) << "Available";
+            else
+                cout << setw(15) << "Not Available";
+            
+            cout << endl;
+        }
+    }
 
 
     void welcome(){
@@ -1091,183 +1130,198 @@ void Librarian::add_new_user(Library &lib){
 
 
 
-void Librarian:: remove_user(Library &lib){
-cout << "Remove user: 1. Student 2. Faculty 3. Librarian: ";
-int choice = get_valid_int();
-int uid = get_valid_int();
-cout << "Enter user ID: ";
+void Librarian::remove_user(Library &lib) {
+    cout << "Select user type to remove: 1. Student  2. Faculty  3. Librarian: ";
+    int type_choice = get_valid_int();
 
+    cout << "Search by: 1. User ID  2. Username: ";
+    int search_choice = get_valid_int();
+    bool removed = false;
 
-if (choice == 1) {
+    if (search_choice == 1) {
+        cout << "Enter user ID: ";
+        int uid = get_valid_int();
 
-    for (auto it = lib.student_list.begin(); it != lib.student_list.end(); it++)  {
-        if ((*it)->get_user_id() == uid){
-
-            delete *it;
-            lib.student_list.erase(it);
-            cout << "Student removed successfully." << endl;
+        if (type_choice == 1) {
+            for (auto it = lib.student_list.begin(); it != lib.student_list.end(); it++) {
+                if ((*it)->get_user_id() == uid) {
+                    delete *it;
+                    lib.student_list.erase(it);
+                    cout << "Student removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else if (type_choice == 2) {
+            for (auto it = lib.faculty_list.begin(); it != lib.faculty_list.end(); it++) {
+                if ((*it)->get_user_id() == uid) {
+                    delete *it;
+                    lib.faculty_list.erase(it);
+                    cout << "Faculty removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else if (type_choice == 3) {
+            for (auto it = lib.librarian_list.begin(); it != lib.librarian_list.end(); it++) {
+                if ((*it)->get_user_id() == uid) {
+                    delete *it;
+                    lib.librarian_list.erase(it);
+                    cout << "Librarian removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else {
+            cout << "Invalid user type selection." << endl;
             return;
-
         }
+    } else if (search_choice == 2) {
+        cout << "Enter username: ";
+        string uname;
+        getline(cin >> ws, uname);
+
+        if (type_choice == 1) {
+            for (auto it = lib.student_list.begin(); it != lib.student_list.end(); it++) {
+                if ((*it)->get_username() == uname) {
+                    delete *it;
+                    lib.student_list.erase(it);
+                    cout << "Student removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else if (type_choice == 2) {
+            for (auto it = lib.faculty_list.begin(); it != lib.faculty_list.end(); it++) {
+                if ((*it)->get_username() == uname) {
+                    delete *it;
+                    lib.faculty_list.erase(it);
+                    cout << "Faculty removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else if (type_choice == 3) {
+            for (auto it = lib.librarian_list.begin(); it != lib.librarian_list.end(); it++) {
+                if ((*it)->get_username() == uname) {
+                    delete *it;
+                    lib.librarian_list.erase(it);
+                    cout << "Librarian removed successfully." << endl;
+                    removed = true;
+                    break;
+                }
+            }
+        } else {
+            cout << "Invalid user type selection." << endl;
+            return;
+        }
+    } else {
+        cout << "Invalid search option." << endl;
+        return;
+    }
+
+    if (!removed) {
+        cout << "User not found." << endl;
     }
 }
-
-else if (choice == 2)  {
-    for (auto it = lib.faculty_list.begin(); it != lib.faculty_list.end(); it++)  {
-       
-        if ((*it)->get_user_id() == uid) {
-            delete *it;
-            lib.faculty_list.erase(it);
-            cout << "Faculty removed successfully." << endl;
-            return;
-        }
-    }
-}
-
-
-else if (choice == 3) {
-    for (auto it = lib.librarian_list.begin(); it != lib.librarian_list.end(); it++)  {
-
-        if ((*it)->get_user_id() == uid)   {
-            delete *it;
-            lib.librarian_list.erase(it);
-            cout << "Librarian removed successfully." << endl;
-            return;
-        }
-    }
-}
-
-else {
-    cout << "Invalid choice." << endl;
-}
-}
-
 
 
 void Librarian::view_history(Library &lib) {
-cout << "Enter user ID to view borrowing history: ";
-int uid = get_valid_int();
+    cout << "Search by: 1. User ID  2. Username: ";
+    int search_choice = get_valid_int();
+    bool found = false;
+
+    if (search_choice == 1) {
+        cout << "Enter user ID: ";
+        int uid = get_valid_int();
+
+        for (auto s : lib.student_list) {
+            if (s->get_user_id() == uid) {
+                cout << "Borrowing history for student " << s->get_username() << ":" << endl;
+                s->get_account().show_history();
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found) {
+            for (auto f : lib.faculty_list) {
+                if (f->get_user_id() == uid) {
+                    cout << "Borrowing history for faculty " << f->get_username() << ":" << endl;
+                    f->get_account().show_history();
+                    found = true;
+                    break;
+                }
+            }
+        }
+    } else if (search_choice == 2) {
+        cout << "Enter username: ";
+        string uname;
+        getline(cin >> ws, uname);  
+
+        
+        for (auto s : lib.student_list) {
+            if (s->get_username() == uname) {
+                cout << "Borrowing history for student " << s->get_username() << ":" << endl;
+                s->get_account().show_history();
+                found = true;
+                break;
+            }
+        }
 
 
-for (auto s : lib.student_list)  {
-    if (s->get_user_id() == uid)
-    {
-        cout << "Borrowing history for student " << s->get_username() << ":" << endl;
-        s->get_account().show_history();
+        if (!found) {
+            for (auto f : lib.faculty_list) {
+                if (f->get_username() == uname) {
+                    cout << "Borrowing history for faculty " << f->get_username() << ":" << endl;
+                    f->get_account().show_history();
+                    found = true;
+                    break;
+                }
+            }
+        }
+    } else {
+        cout << "Invalid search option." << endl;
         return;
+    }
+
+    if (!found) {
+        cout << "User not found or no history available." << endl;
     }
 }
 
-for (auto f : lib.faculty_list)     {
-    if (f->get_user_id() == uid)
-    {
-        cout << "Borrowing history for faculty " << f->get_username() << ":" << endl;
-        f->get_account().show_history();
-        return;
-    }
-}
-
-cout << "User not found or no history available." << endl;
-}
 
 
-
-void Student::show_menu(Library &lib){
+void Student::show_menu(Library &lib) {
     int choice;
-    do
-    {
+    do {
         cout << "\n--- Student Menu ---\n";
-        cout << "1. Borrow book\n2. Return book\n3. View borrowing history\n4. View fines\n5. Pay fines\n6. Logout\n";
+        cout << "1. View all books\n" << "2. Borrow book\n" << "3. Return book\n"
+             << "4. View borrowing history\n"
+             << "5. View fines\n"
+             << "6. Pay fines\n"
+             << "7. Logout\n";
         cout << "Enter your choice: ";
         choice = get_valid_int();
 
-        switch (choice)
-        {
+        switch (choice) {
             case 1:
-                borrow_book(lib.all_books());
+                lib.view_all_books();
                 break;
             case 2:
-                return_book(lib.all_books());
+                borrow_book(lib.all_books());
                 break;
             case 3:
-                get_account().show_history();
+                return_book(lib.all_books());
                 break;
             case 4:
+                get_account().show_history();
+                break;
+            case 5:
                 get_account().view_fines();
                 break;
-            case 5:
+            case 6:
                 get_account().pay_fines();
-                break;
-            case 6:
-                cout << "Logging out..." << endl;
-                break;
-            default:
-                cout << "Invalid choice." << endl;
-        }
-
-    } while (choice != 6);
-}
-
-
-void Faculty::show_menu(Library &lib)
-{
-    int choice;
-    do
-    {
-        cout << "\n--- Faculty Menu ---\n";
-        cout << "1. Borrow book\n2. Return book\n3. View borrowing history\n4. Logout\n";
-        cout << "Enter your choice: ";
-        choice = get_valid_int();
-
-        switch (choice)
-        {
-            case 1:
-                borrow_book(lib.all_books());
-                break;
-            case 2:
-                return_book(lib.all_books());
-                break;
-            case 3:
-                get_account().show_history();
-                break;
-            case 4:
-                cout << "Logging out..." << endl;
-                break;
-            default:
-                cout << "Invalid choice." << endl;
-        }
-
-    } while (choice != 4);
-}
-
-
-void Librarian::show_menu(Library &lib)
-{
-    int choice;
-    do  {
-        cout << "\n--- Librarian Menu ---\n";
-        cout << "1. Add new book\n2. Update book\n3. Remove book\n4. Add new user\n5. Remove user\n6. View user borrowing history\n7. Logout\n";
-        cout << "Enter your choice: ";
-        choice = get_valid_int();
-
-        switch (choice)  {
-            case 1:
-                add_new_book(lib.all_books());
-                break;
-            case 2:
-                update_book(lib.all_books());
-                break;
-            case 3:
-                remove_book(lib.all_books());
-                break;
-            case 4:
-                add_new_user(lib);
-                break;
-            case 5:
-                remove_user(lib);
-                break;
-            case 6:
-                view_history(lib);
                 break;
             case 7:
                 cout << "Logging out..." << endl;
@@ -1275,8 +1329,89 @@ void Librarian::show_menu(Library &lib)
             default:
                 cout << "Invalid choice." << endl;
         }
-
     } while (choice != 7);
+}
+
+
+
+void Faculty::show_menu(Library &lib) {
+    int choice;
+    do {
+        cout << "\n--- Faculty Menu ---\n";
+        cout << "1. View all books\n"
+             << "2. Borrow book\n"
+             << "3. Return book\n"
+             << "4. View borrowing history\n"
+             << "5. Logout\n";
+        cout << "Enter your choice: ";
+        choice = get_valid_int();
+
+        switch (choice) {
+            case 1:
+                lib.view_all_books();
+                break;
+            case 2:
+                borrow_book(lib.all_books());
+                break;
+            case 3:
+                return_book(lib.all_books());
+                break;
+            case 4:
+                get_account().show_history();
+                break;
+            case 5:
+                cout << "Logging out..." << endl;
+                break;
+            default:
+                cout << "Invalid choice." << endl;
+        }
+    } while (choice != 5);
+}
+
+void Librarian::show_menu(Library &lib) {
+    int choice;
+    do {
+        cout << "\n--- Librarian Menu ---\n";
+        cout << "1. View all books\n"
+             << "2. Add new book\n"
+             << "3. Update book\n"
+             << "4. Remove book\n"
+             << "5. Add new user\n"
+             << "6. Remove user\n"
+             << "7. View user borrowing history\n"
+             << "8. Logout\n";
+        cout << "Enter your choice: ";
+        choice = get_valid_int();
+
+        switch (choice) {
+            case 1:
+                lib.view_all_books();
+                break;
+            case 2:
+                add_new_book(lib.all_books());
+                break;
+            case 3:
+                update_book(lib.all_books());
+                break;
+            case 4:
+                remove_book(lib.all_books());
+                break;
+            case 5:
+                add_new_user(lib);
+                break;
+            case 6:
+                remove_user(lib);
+                break;
+            case 7:
+                view_history(lib);
+                break;
+            case 8:
+                cout << "Logging out..." << endl;
+                break;
+            default:
+                cout << "Invalid choice." << endl;
+        }
+    } while (choice != 8);
 }
 
 
@@ -1346,7 +1481,7 @@ int main(){
     int main_choice;
     do {
         cout << "--- Library Management System ---" << endl;
-        cout << "1. Login\n2. Exit\nEnter your choice: ";
+        cout << "1. Login\n2. Exit\nEnter your choice number: ";
         main_choice = get_valid_int();
 
         switch (main_choice){
