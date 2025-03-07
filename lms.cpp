@@ -13,7 +13,10 @@ using namespace std;
 int id_of_book = 10001;
 int id_of_user = 20001;
 
+
+//A function to take inputs only in integers and reports others
 int get_valid_int() {
+
     int num;
     bool first_attempt = true;
     while (true) {
@@ -32,10 +35,13 @@ int get_valid_int() {
 }
 
 
+// enum is used becaue it allows us to represent different meaningful states
+// for the user type
 enum class user_type {  student, faculty, librarian };
 
+// for the book status
 enum class status { available, borrowed, reserved};
-    
+
     
 
 class Book {
@@ -46,14 +52,18 @@ private:
     string publisher;
     int year;
     string isbn;
-    status book_status;
+    status book_status; //the book status is represented by the status class
 
 
 public:
+
+    // constructor overloading is done here (both types of function calling is used in the later part of the code)
     Book(){}
     Book(int id, const string &t, const string &a, const string &p, int y, const string &isbn_val, status s)
         : id_book(id), title(t), author(a), publisher(p), year(y), isbn(isbn_val), book_status(s){}
 
+
+    // setters and getters    
     void set_id(int id){
         id_book = id;
     }
@@ -106,6 +116,7 @@ public:
     }
 
     
+    // function for converting the book details into " | " seperated strings to store in database.
     string to_string() const{
         ostringstream oss;
         oss << id_book << "|" << title << "|" << author << "|" << publisher << "|"
@@ -113,11 +124,12 @@ public:
         return oss.str();
     }
 
-    
+
+    // function to load back the data from the converted string
     static Book from_string(const string &str){
         Book b;
         istringstream iss(str);
-        string token;
+        string token; //for input
 
         getline(iss, token, '|');
         b.id_book = stoi(token);
@@ -137,7 +149,9 @@ public:
     }
 };
 
-class Library;
+
+
+class Library; // forward declaration
 
 
 class User {
@@ -149,14 +163,17 @@ protected:
     int id_user;
 
 public:
+
+    // THE USER_ID get auto incremented
     User() {
         id_user = id_of_user;
         id_of_user++;
     }
+
+    // setters and getters
     int get_user_id() const{
         return id_user;
     }
-
 
     void set_name(){
         cout << "Enter name: ";
@@ -204,6 +221,7 @@ public:
         return password;
     }
 
+    // to create account in user specific   
     virtual void create_account(){
         set_name();
         set_username();
@@ -214,7 +232,6 @@ public:
 
 
     // direct setters 
-    // these are needed because i need to initialise them
     void set_name_direct(const string &n) {
         name = n;
     }
@@ -230,12 +247,13 @@ public:
 
 };
 
-
+//to store history
 struct BorrowRecord {
     Book book;
     time_t borrow_date;
     time_t return_date;
 };
+
 
 class Account {
 
@@ -330,7 +348,6 @@ public:
         int fine = get_fines();
         if (fine == 0){
             cout << "No fines to pay." << endl;
-            return;
         }
 
         cout << "Total fine: Rs " << fine << endl;
@@ -344,8 +361,9 @@ public:
 };
 
 
-class Student : public User
-{
+
+class Student : public User{
+
 private:
     int max_books;
     int num_books_borrowed;
@@ -418,6 +436,7 @@ public:
         return account;
     }
 
+    // function to convert data into string to store inside database
     string serialize() {
         ostringstream oss;
         
@@ -426,6 +445,7 @@ public:
         return oss.str();
     }
 
+    //function to get back data from the database
     static Student* deserialize(const string &line) {
         Student* s = new Student();
         istringstream iss(line);
@@ -453,8 +473,7 @@ public:
 
 
 
-class Faculty : public User
-{
+class Faculty : public User{
 private:
     int max_books;
     int num_books_borrowed;
@@ -462,21 +481,17 @@ private:
     Account account;
 
 public:
-    Faculty() : max_books(5), num_books_borrowed(0), max_period(30)
-    {
+    Faculty() : max_books(5), num_books_borrowed(0), max_period(30) {
         set_user_type(user_type::faculty);
     }
 
-    void create_account() override
-    {
+    void create_account() override {
         cout << "\n--- Creating faculty account ---" << endl;
         User::create_account();
     }
 
-    void borrow_book(vector<Book> &books)
-    {
-        if (num_books_borrowed >= max_books)
-        {
+    void borrow_book(vector<Book> &books) {
+        if (num_books_borrowed >= max_books){
             cout << "Borrowing limit reached." << endl;
             return;
         }
@@ -484,20 +499,20 @@ public:
         cout << "Enter book ID to borrow: ";
         int book_id = get_valid_int();
 
-        for (auto &book : books)
-        {
-            if (book.get_id() == book_id)
-            {
-                if (book.get_status() == status::available)
-                {
+        for (auto &book : books){
+
+            if (book.get_id() == book_id)  {
+
+                if (book.get_status() == status::available) {
+
                     book.set_status(status::borrowed);
                     account.add_borrowed_book(book);
                     num_books_borrowed++;
                     cout << "Book \"" << book.get_title() << "\" borrowed successfully." << endl;
                     return;
                 }
-                else
-                {
+
+                else {
                     cout << "Book is not available." << endl;
                     return;
                 }
@@ -507,8 +522,8 @@ public:
         cout << "Book ID not found." << endl;
     }
 
-    void return_book(vector<Book> &books)
-    {
+
+    void return_book(vector<Book> &books) {
         cout << "Enter book ID to return: ";
         int book_id = get_valid_int();
 
@@ -529,6 +544,7 @@ public:
         return account;
     }
 
+     // function to convert data into string to store inside database
     string serialize() {
         ostringstream oss;
         oss << get_user_id() << "|" << name << "|" << username << "|" << password << "|" 
@@ -536,6 +552,7 @@ public:
         return oss.str();
     }
 
+    //function to get back data from the database
     static Faculty* deserialize(const string &line) {
         Faculty* f = new Faculty();
         istringstream iss(line);
@@ -617,7 +634,7 @@ public:
                 cout << "1. Update title"<<endl << "2. Update author"<<endl <<"3. Update publisher"<<endl <<"4. Update year"<<endl <<"5. Update isbn"<<endl;
                 cout << "Enter your choice: " << endl;
                 int input = get_valid_int();
-                cin.ignore(); // clear newline
+                cin.ignore(); // clear newlines
 
                 switch (input){
                     case 1:{
@@ -689,13 +706,14 @@ public:
         cout << "Book not found." << endl;
     }
 
+    //function to convert the data into string to store into database
     string serialize() {
         ostringstream oss;
-        // Librarian might have fewer extra fields
         oss << get_user_id() << "|" << name << "|" << username << "|" << password;
         return oss.str();
     }
 
+    //function to get back data from the database
     static Librarian* deserialize(const string &line) {
         Librarian* l = new Librarian();
         istringstream iss(line);
@@ -727,7 +745,6 @@ private:
     vector<Faculty *> faculty_list;
     vector<Librarian *> librarian_list;
 
-    
     string user_name_setter() {
 
         string name;
@@ -759,6 +776,7 @@ public:
     }
 
 
+    // functions to set and get users details
     void add_new_student(Student *s){
         student_list.push_back(s);
     }
@@ -786,6 +804,7 @@ public:
     
     friend class Librarian;
 
+    // function in home page to login based on user type 
     string select_login_type(){
         cout << "\nWelcome to People's Library" << endl;
         cout << "Press number for Login Type" << endl;
@@ -828,7 +847,7 @@ public:
         
 
 
-        cout << string(110, '-') << endl;
+        cout << string(110, '-') << endl; 
         
 
         for (const auto &book : books_list) {
@@ -849,6 +868,7 @@ public:
     }
 
 
+    //initital function to login users
     void welcome(){
         string login_type_str = select_login_type();
         string uname;
@@ -926,7 +946,7 @@ public:
     }
     
 
-
+    //load and save databases
     void load_books(const string &filename) {
         ifstream file(filename);
         if (file.is_open()){
@@ -1089,9 +1109,6 @@ public:
             file.close();
         }
     }
-    
-    
-
 };
 
 
@@ -1152,7 +1169,9 @@ void Librarian::remove_user(Library &lib) {
                     break;
                 }
             }
-        } else if (type_choice == 2) {
+        } 
+        
+        else if (type_choice == 2) {
             for (auto it = lib.faculty_list.begin(); it != lib.faculty_list.end(); it++) {
                 if ((*it)->get_user_id() == uid) {
                     delete *it;
@@ -1162,7 +1181,9 @@ void Librarian::remove_user(Library &lib) {
                     break;
                 }
             }
-        } else if (type_choice == 3) {
+        } 
+        
+        else if (type_choice == 3) {
             for (auto it = lib.librarian_list.begin(); it != lib.librarian_list.end(); it++) {
                 if ((*it)->get_user_id() == uid) {
                     delete *it;
@@ -1176,7 +1197,9 @@ void Librarian::remove_user(Library &lib) {
             cout << "Invalid user type selection." << endl;
             return;
         }
-    } else if (search_choice == 2) {
+    } 
+    
+    else if (search_choice == 2) {
         cout << "Enter username: ";
         string uname;
         getline(cin >> ws, uname);
@@ -1191,7 +1214,9 @@ void Librarian::remove_user(Library &lib) {
                     break;
                 }
             }
-        } else if (type_choice == 2) {
+        }
+
+        else if (type_choice == 2) {
             for (auto it = lib.faculty_list.begin(); it != lib.faculty_list.end(); it++) {
                 if ((*it)->get_username() == uname) {
                     delete *it;
@@ -1201,7 +1226,9 @@ void Librarian::remove_user(Library &lib) {
                     break;
                 }
             }
-        } else if (type_choice == 3) {
+        }
+
+        else if (type_choice == 3) {
             for (auto it = lib.librarian_list.begin(); it != lib.librarian_list.end(); it++) {
                 if ((*it)->get_username() == uname) {
                     delete *it;
@@ -1254,7 +1281,9 @@ void Librarian::view_history(Library &lib) {
                 }
             }
         }
-    } else if (search_choice == 2) {
+    } 
+    
+    else if (search_choice == 2) {
         cout << "Enter username: ";
         string uname;
         getline(cin >> ws, uname);  
@@ -1297,10 +1326,11 @@ void Student::show_menu(Library &lib) {
     do {
         cout << "\n--- Student Menu ---\n";
         cout << "1. View all books\n" << "2. Borrow book\n" << "3. Return book\n"
-             << "4. View borrowing history\n"
-             << "5. View fines\n"
-             << "6. Pay fines\n"
-             << "7. Logout\n";
+             << "4. View borrowed books\n"
+             << "5. View borrowing history\n"
+             << "6. View fines\n"
+             << "7. Pay fines\n"
+             << "8. Logout\n";
         cout << "Enter your choice: ";
         choice = get_valid_int();
 
@@ -1314,16 +1344,33 @@ void Student::show_menu(Library &lib) {
             case 3:
                 return_book(lib.all_books());
                 break;
-            case 4:
+            case 4: {
+                vector< pair<Book, time_t> > books_borrowed;
+                books_borrowed = get_account().get_borrowed_books();
+                cout << "Books borrowed by user :" << endl;
+
+                if (books_borrowed.empty()){
+                    cout << "No books are currently borrowed by user" << endl  ;
+                }
+                else {
+                for (const auto &entry : books_borrowed) {
+                    cout << "Book: " << entry.first.get_title()  
+                         << "| Borrowed on: " << ctime(&entry.second)<< endl;
+                }
+                }
+                
+                break;
+            }
+            case 5:
                 get_account().show_history();
                 break;
-            case 5:
+            case 6:
                 get_account().view_fines();
                 break;
-            case 6:
+            case 7:
                 get_account().pay_fines();
                 break;
-            case 7:
+            case 8:
                 cout << "Logging out..." << endl;
                 break;
             default:
@@ -1341,8 +1388,9 @@ void Faculty::show_menu(Library &lib) {
         cout << "1. View all books\n"
              << "2. Borrow book\n"
              << "3. Return book\n"
-             << "4. View borrowing history\n"
-             << "5. Logout\n";
+             << "4. View borrowed books\n"
+             << "5. View borrowing history\n"
+             << "6. Logout\n";
         cout << "Enter your choice: ";
         choice = get_valid_int();
 
@@ -1356,10 +1404,26 @@ void Faculty::show_menu(Library &lib) {
             case 3:
                 return_book(lib.all_books());
                 break;
-            case 4:
+            case 4: {
+                vector< pair<Book, time_t> > books_borrowed;
+                books_borrowed = get_account().get_borrowed_books();
+                cout << "Books borrowed by user :" << endl;
+                if (books_borrowed.empty()){
+                    cout << "No books are currently borrowed by user" << endl  ;
+                }
+                else {
+                for (const auto &entry : books_borrowed) {
+                    cout << "Book: " << entry.first.get_title()  
+                         << "| Borrowed on: " << ctime(&entry.second)<< endl;
+                }
+                }
+                
+                break;
+            }
+            case 5:
                 get_account().show_history();
                 break;
-            case 5:
+            case 6:
                 cout << "Logging out..." << endl;
                 break;
             default:
@@ -1473,7 +1537,7 @@ int main(){
     }
 
 
-    //1 librarian
+    // 1 librarian
     if (lib.get_librarian_count() == 0) {
 
         Librarian* l = new Librarian();
