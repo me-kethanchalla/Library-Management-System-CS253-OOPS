@@ -349,13 +349,14 @@ public:
         if (fine == 0){
             cout << "No fines to pay." << endl;
         }
-
+        else {
         cout << "Total fine: Rs " << fine << endl;
         cout << "Press 1 to pay fines: ";
         int inp = get_valid_int();
 
         if (inp == 1){
             cout << "Fine payment done..." << endl;
+        }
         }
     }
 };
@@ -807,10 +808,11 @@ public:
     // function in home page to login based on user type 
     string select_login_type(){
         cout << "\nWelcome to People's Library" << endl;
-        cout << "Press number for Login Type" << endl;
+        
         cout << "1. Student" << endl;
         cout << "2. Librarian" << endl;
         cout << "3. Faculty" << endl;
+        cout << "Press number for Login Type :" << endl;
         int type = get_valid_int();
 
         if (type == 1){
@@ -1376,7 +1378,7 @@ void Student::show_menu(Library &lib) {
             default:
                 cout << "Invalid choice." << endl;
         }
-    } while (choice != 7);
+    } while (choice != 8);
 }
 
 
@@ -1429,7 +1431,7 @@ void Faculty::show_menu(Library &lib) {
             default:
                 cout << "Invalid choice." << endl;
         }
-    } while (choice != 5);
+    } while (choice != 6);
 }
 
 void Librarian::show_menu(Library &lib) {
