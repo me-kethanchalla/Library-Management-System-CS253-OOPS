@@ -1329,7 +1329,7 @@ void Student::show_menu(Library &lib) {
         cout << "\n--- Student Menu ---\n";
         cout << "1. View all books\n" << "2. Borrow book\n" << "3. Return book\n"
              << "4. View borrowed books\n"
-             << "5. View borrowing history\n"
+             << "5. View previously returned books history\n"
              << "6. View fines\n"
              << "7. Pay fines\n"
              << "8. Logout\n";
@@ -1391,7 +1391,7 @@ void Faculty::show_menu(Library &lib) {
              << "2. Borrow book\n"
              << "3. Return book\n"
              << "4. View borrowed books\n"
-             << "5. View borrowing history\n"
+             << "5. View previously returned books history\n"
              << "6. Logout\n";
         cout << "Enter your choice: ";
         choice = get_valid_int();
